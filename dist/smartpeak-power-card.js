@@ -22,12 +22,18 @@ class SmartpeakPowerCard extends HTMLElement {
     else if (current <= threshold + margin) color = 'orange';
     else color = 'red';
 
-    const unit = current < 1000 ? 'W' : 'kW';
-    const value = current < 1000 ? current.toFixed(0) : (current / 1000).toFixed(1);
+    let unit = 'W';
+    let display = `${current.toFixed(0)} W`;
+    if (current >= 1000) {
+      const current_kW = (current / 1000).toFixed(1);
+      const threshold_kW = (threshold).toFixed(1);
+      display = `${current_kW} / ${threshold_kW} kW`;
+      unit = 'kW';
+    }
 
     this.innerHTML = `
       <ha-card style="text-align: center; padding: 16px; color: ${color}; font-size: 2em;">
-        ${value} ${unit}
+        ${display}
       </ha-card>
     `;
   }
