@@ -1,33 +1,33 @@
 class SmartpeakPowerCard extends HTMLElement {
   setConfig(config) {
-    if (!config.verbruik_entity) {
-      throw new Error("verbruik_entity is verplicht.");
+    if (!config.current_power_entity) {
+      throw new Error("current_power_entity is required.");
     }
-    if (!config.piek_entity && typeof config.piek !== 'number') {
-      throw new Error("Geef piek_entity of een vaste piek waarde (piek) op.");
+    if (!config.threshold_entity && typeof config.threshold !== 'number') {
+      throw new Error("Provide either threshold_entity or a fixed threshold value.");
     }
     this.config = config;
   }
 
   set hass(hass) {
-    const verbruik = parseFloat(hass.states[this.config.verbruik_entity]?.state ?? 0);
-    const piek = this.config.piek_entity
-      ? parseFloat(hass.states[this.config.piek_entity]?.state ?? 0)
-      : parseFloat(this.config.piek);
-    const marge = this.config.marge ?? 1;
+    const current = parseFloat(hass.states[this.config.current_power_entity]?.state ?? 0);
+    const threshold = this.config.threshold_entity
+      ? parseFloat(hass.states[this.config.threshold_entity]?.state ?? 0)
+      : parseFloat(this.config.threshold);
+    const margin = this.config.margin ?? 1;
 
-    let kleur = 'gray';
-    if (verbruik < 0) kleur = 'purple';
-    else if (verbruik <= piek) kleur = 'green';
-    else if (verbruik <= piek + marge) kleur = 'orange';
-    else kleur = 'red';
+    let color = 'gray';
+    if (current < 0) color = 'purple';
+    else if (current <= threshold) color = 'green';
+    else if (current <= threshold + margin) color = 'orange';
+    else color = 'red';
 
-    const eenheid = verbruik < 1000 ? 'W' : 'kW';
-    const waarde = verbruik < 1000 ? verbruik.toFixed(0) : (verbruik / 1000).toFixed(1);
+    const unit = current < 1000 ? 'W' : 'kW';
+    const value = current < 1000 ? current.toFixed(0) : (current / 1000).toFixed(1);
 
     this.innerHTML = `
-      <ha-card style="text-align: center; padding: 16px; color: ${kleur}; font-size: 2em;">
-        ${waarde} ${eenheid}
+      <ha-card style="text-align: center; padding: 16px; color: ${color}; font-size: 2em;">
+        ${value} ${unit}
       </ha-card>
     `;
   }
@@ -43,9 +43,9 @@ class SmartpeakPowerCard extends HTMLElement {
 
   static getStubConfig() {
     return {
-      verbruik_entity: "sensor.verbruik_actueel",
-      piek: 2.5,
-      marge: 1
+      current_power_entity: "sensor.current_power",
+      threshold: 2.5,
+      margin: 1
     };
   }
 }
