@@ -55,6 +55,7 @@ class SmartpeakPowerCardEditor extends HTMLElement {
 
   _handleChange() {
     const config = {
+      type: "custom:smartpeak-power-card",
       current_power_entity: this.shadowRoot.getElementById('current_power_entity').value,
       threshold_entity: this.shadowRoot.getElementById('threshold_entity').value || undefined,
       threshold: parseFloat(this.shadowRoot.getElementById('threshold').value) || undefined,
