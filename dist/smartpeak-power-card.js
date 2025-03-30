@@ -26,22 +26,23 @@ class SmartpeakPowerCard extends HTMLElement {
     let display = '';
 
     if (showThreshold) {
-      const currentFormatted = current >= 1000
-        ? `${(Math.ceil(current / 100) / 10).toFixed(1)} kW`
-        : `${Math.ceil(current)} W`;
-      const thresholdFormatted = threshold >= 1000
-        ? `${(Math.ceil(threshold / 100) / 10).toFixed(1)} kW`
-        : `${Math.ceil(threshold)} W`;
-
-      display = `<span style="color:${color}">${currentFormatted}</span> <span style="color:white">/ ${thresholdFormatted}</span>`;
+      if (current >= 1000 || threshold >= 1000) {
+        const current_kW = Math.ceil(current / 100) / 10; // ceil to nearest 0.1
+        const threshold_kW = Math.ceil(threshold);
+        display = `${current_kW} / ${threshold_kW} kW`;
+      } else {
+        display = `${Math.ceil(current)} / ${Math.ceil(threshold)} W`;
+      }
     } else {
-      display = current >= 1000
-        ? `${(Math.ceil(current / 100) / 10).toFixed(1)} kW`
-        : `${Math.ceil(current)} W`;
+      if (current >= 1000) {
+        display = `${Math.ceil(current / 100) / 10} kW`;
+      } else {
+        display = `${Math.ceil(current)} W`;
+      }
     }
 
     this.innerHTML = `
-      <ha-card style="text-align: center; padding: 16px; font-size: 2em;">
+      <ha-card style="text-align: center; padding: 16px; color: ${color}; font-size: 2em;">
         ${display}
       </ha-card>
     `;
@@ -59,7 +60,7 @@ class SmartpeakPowerCard extends HTMLElement {
   static getStubConfig() {
     return {
       current_power_entity: "sensor.current_power",
-      threshold: 2500,
+      threshold: 2.5,
       margin: 1,
       show_threshold: false
     };
