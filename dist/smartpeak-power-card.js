@@ -15,6 +15,7 @@ class SmartpeakPowerCard extends HTMLElement {
       ? parseFloat(hass.states[this.config.threshold_entity]?.state ?? 0)
       : parseFloat(this.config.threshold);
     const margin = this.config.margin ?? 1;
+    const showThreshold = this.config.show_threshold ?? false;
 
     let color = 'gray';
     if (current < 0) color = 'purple';
@@ -22,13 +23,22 @@ class SmartpeakPowerCard extends HTMLElement {
     else if (current <= threshold + margin) color = 'orange';
     else color = 'red';
 
-    let unit = 'W';
-    let display = `${current.toFixed(0)} W`;
-    if (current >= 1000) {
-      const current_kW = (current / 1000).toFixed(1);
-      const threshold_kW = (threshold).toFixed(1);
-      display = `${current_kW} / ${threshold_kW} kW`;
-      unit = 'kW';
+    let display = '';
+
+    if (showThreshold) {
+      if (current >= 1000 || threshold >= 1000) {
+        const current_kW = Math.ceil(current / 100) / 10; // ceil to nearest 0.1
+        const threshold_kW = Math.ceil(threshold);
+        display = `${current_kW} / ${threshold_kW} kW`;
+      } else {
+        display = `${Math.ceil(current)} / ${Math.ceil(threshold)} W`;
+      }
+    } else {
+      if (current >= 1000) {
+        display = `${Math.ceil(current / 100) / 10} kW`;
+      } else {
+        display = `${Math.ceil(current)} W`;
+      }
     }
 
     this.innerHTML = `
@@ -51,7 +61,8 @@ class SmartpeakPowerCard extends HTMLElement {
     return {
       current_power_entity: "sensor.current_power",
       threshold: 2.5,
-      margin: 1
+      margin: 1,
+      show_threshold: false
     };
   }
 }
