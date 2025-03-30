@@ -6,6 +6,7 @@ A simple and flexible Home Assistant custom card to visualize your current power
 
 ## Features
 - Displays real-time power usage in W or kW
+- Optional display of current vs threshold (e.g. `12 / 13 kW`)
 - Color changes based on thresholds:
   - Purple: negative (injection)
   - Green: below threshold
@@ -30,14 +31,13 @@ A simple and flexible Home Assistant custom card to visualize your current power
 
 ## Usage
 
-Add this card to your dashboard:
-
 ### With dynamic threshold (from entity)
 ```yaml
 type: custom:smartpeak-power-card
 current_power_entity: sensor.current_power
 threshold_entity: sensor.quarter_peak
 margin: 1
+show_threshold: true
 ```
 
 ### With fixed threshold
@@ -46,6 +46,16 @@ type: custom:smartpeak-power-card
 current_power_entity: sensor.current_power
 threshold: 2.5
 margin: 1
+show_threshold: true
+```
+
+### Without threshold display
+```yaml
+type: custom:smartpeak-power-card
+current_power_entity: sensor.current_power
+threshold: 2.5
+margin: 1
+show_threshold: false
 ```
 
 ## Configuration Options
@@ -55,6 +65,7 @@ margin: 1
 | `threshold_entity`     | ❌       | Entity ID that provides the dynamic threshold (in kW)            |
 | `threshold`            | ❌       | Fixed threshold value (in kW) if no entity is used               |
 | `margin`               | ❌       | Margin added to threshold to calculate orange/red transitions    |
+| `show_threshold`       | ❌       | If true, display `current / threshold` instead of just current   |
 
 ## License
 MIT License © 2025 [Smartpeak](https://smartpeak.be)
