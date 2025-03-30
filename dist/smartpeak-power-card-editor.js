@@ -5,6 +5,10 @@ class SmartpeakPowerCardEditor extends HTMLElement {
     this._render();
   }
 
+  set hass(hass) {
+    this._hass = hass;
+  }
+
   _render() {
     if (this.shadowRoot) return;
     this.attachShadow({ mode: 'open' });
