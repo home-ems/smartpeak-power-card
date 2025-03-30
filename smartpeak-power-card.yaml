@@ -1,6 +1,6 @@
 name: "Smartpeak Power Card"
 description: "A simple Home Assistant card that shows real-time power usage in W/kW with dynamic color based on threshold values."
-version: "20250330.3"
+version: "20250330.4"
 js_url: "https://github.com/home-ems/smartpeak-power-card/releases/latest/download/smartpeak-power-card.js"
 type: module
 requirements: []
