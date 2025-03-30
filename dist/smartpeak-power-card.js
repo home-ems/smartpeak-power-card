@@ -30,6 +30,7 @@ class SmartpeakPowerCard extends HTMLElement {
     }
 
     let display = '';
+    const isRed = color === 'red';
 
     const currentFormatted = current >= 1000
       ? `${(Math.ceil(current / 100) / 10).toFixed(1)} kW`
@@ -40,12 +41,12 @@ class SmartpeakPowerCard extends HTMLElement {
         ? `${(Math.ceil(threshold / 100) / 10).toFixed(1)} kW`
         : `${Math.ceil(threshold)} W`;
 
-      display = `<span style="color:${color}">${currentFormatted}</span> <span style="color:white">/ ${thresholdFormatted}</span>`;
+      display = `<span style="color:${isRed ? 'white' : color}">${currentFormatted}</span> <span style="color:white">/ ${thresholdFormatted}</span>`;
     } else {
-      display = `<span style="color:${color}">${currentFormatted}</span>`;
+      display = `<span style="color:${isRed ? 'white' : color}">${currentFormatted}</span>`;
     }
 
-    const cardClass = color === 'red' ? 'smartpeak-red-card' : 'smartpeak-normal-card';
+    const cardClass = isRed ? 'smartpeak-red-card' : 'smartpeak-normal-card';
 
     this.innerHTML = `
       <ha-card class="${cardClass}">
