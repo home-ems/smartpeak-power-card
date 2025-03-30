@@ -78,11 +78,6 @@ class SmartpeakPowerCard extends HTMLElement {
     return 1;
   }
 
-  static getConfigElement() {
-    const element = document.createElement("hui-entities-card-editor");
-    return element;
-  }
-
   static getStubConfig() {
     return {
       current_power_entity: "sensor.current_power",
@@ -91,6 +86,11 @@ class SmartpeakPowerCard extends HTMLElement {
       show_threshold: false,
       force_red: false
     };
+  }
+
+  static async getConfigElement() {
+    await import("./smartpeak-power-card-editor.js");
+    return document.createElement("smartpeak-power-card-editor");
   }
 }
 
