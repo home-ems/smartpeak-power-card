@@ -16,34 +16,60 @@ class SmartpeakPowerCard extends HTMLElement {
       : parseFloat(this.config.threshold);
     const margin = this.config.margin ?? 1;
     const showThreshold = this.config.show_threshold ?? false;
+    const forceRed = this.config.force_red ?? false;
 
     let color = 'gray';
-    if (current < 0) color = 'purple';
-    else if (current <= threshold) color = 'green';
-    else if (current <= threshold + margin) color = 'orange';
-    else color = 'red';
+    if (current < 0) {
+      color = 'purple';
+    } else if (forceRed || current >= threshold) {
+      color = 'red';
+    } else if (current >= threshold - margin) {
+      color = 'orange';
+    } else {
+      color = 'green';
+    }
 
     let display = '';
 
+    const currentFormatted = current >= 1000
+      ? `${(Math.ceil(current / 100) / 10).toFixed(1)} kW`
+      : `${Math.ceil(current)} W`;
+
     if (showThreshold) {
-      const currentFormatted = current >= 1000
-        ? `${(Math.ceil(current / 100) / 10).toFixed(1)} kW`
-        : `${Math.ceil(current)} W`;
       const thresholdFormatted = threshold >= 1000
         ? `${(Math.ceil(threshold / 100) / 10).toFixed(1)} kW`
         : `${Math.ceil(threshold)} W`;
 
       display = `<span style="color:${color}">${currentFormatted}</span> <span style="color:white">/ ${thresholdFormatted}</span>`;
     } else {
-      display = current >= 1000
-        ? `${(Math.ceil(current / 100) / 10).toFixed(1)} kW`
-        : `${Math.ceil(current)} W`;
+      display = `<span style="color:${color}">${currentFormatted}</span>`;
     }
 
+    const cardClass = color === 'red' ? 'smartpeak-red-card' : 'smartpeak-normal-card';
+
     this.innerHTML = `
-      <ha-card style="text-align: center; padding: 16px; font-size: 2em;">
+      <ha-card class="${cardClass}">
         ${display}
       </ha-card>
+      <style>
+        .smartpeak-red-card {
+          background-color: red;
+          color: white;
+          text-align: center;
+          padding: 16px;
+          font-size: 2em;
+          animation: fadeInOut 1s ease-in-out infinite alternate;
+        }
+        .smartpeak-normal-card {
+          text-align: center;
+          padding: 16px;
+          font-size: 2em;
+        }
+        @keyframes fadeInOut {
+          0% { opacity: 1; }
+          100% { opacity: 0.6; }
+        }
+      </style>
     `;
   }
 
@@ -61,7 +87,8 @@ class SmartpeakPowerCard extends HTMLElement {
       current_power_entity: "sensor.current_power",
       threshold: 2500,
       margin: 1,
-      show_threshold: false
+      show_threshold: false,
+      force_red: false
     };
   }
 }
