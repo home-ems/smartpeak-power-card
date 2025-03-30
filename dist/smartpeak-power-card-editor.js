@@ -1,5 +1,6 @@
 class SmartpeakPowerCardEditor extends HTMLElement {
   setConfig(config) {
+    config.type = "custom:smartpeak-power-card";
     this._config = config;
     this._render();
   }
